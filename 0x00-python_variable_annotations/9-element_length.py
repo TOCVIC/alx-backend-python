@@ -3,7 +3,6 @@
 
 
 from typing import List, Sequence, Tuple
-
 def element_length(lst: List[Sequence]) -> List[int]:
     """Annotate the below function’s parameters and return values with the
     appropriate types"""
