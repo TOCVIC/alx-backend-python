@@ -1,9 +1,16 @@
 #!/usr/bin/env python3
-'''Task 9's module.
-'''
-from typing import Sequence, Tuple, Iterable, List
+"""
+Duck type iterable object
+Annotate a function param and return values
+with appropriate types
+"""
+from typing import Sequence, Iterable, List, Tuple
 
 
-def element_length(lst: Iterable[Sequence]) -> List[Tuple[Sequence ,int]]:
-    """Returns a tuple of the lengths of the elements of a list"""
-    return tuple(len(i) for i in lst)
+def element_length(lst: Iterable[Sequence]) -> List[Tuple[Sequence, int]]:
+    """
+    Annotate function param
+    element_length
+    """
+    return [(i, len(i)) for i in lst]
+    
