@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
-"""Type Checking"""
-
-
+'''Task 8's module.
+'''
 from typing import Callable
+
+
 def make_multiplier(multiplier: float) -> Callable[[float], float]:
-    """Return a function that multiplies a float by multiplier."""
-    return lambda x: x * multiplier
+    """Returns a function that multiplies a float by multiplier"""
+    def multiply_by_multiplier(n: float) -> float:
+        """Returns the product of n and multiplier"""
+        return n * multiplier
+    return multiply_by_multiplier

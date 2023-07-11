@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Type Checking"""
+'''Task 9's module.
+'''
+from typing import Sequence, Tuple, Iterable, List
 
 
-from typing import List, Sequence, Tuple
-def element_length(lst: List[Sequence]) -> List[int]:
-    """Annotate the below function’s parameters and return values with the
-    appropriate types"""
-    return [len(i) for i in lst]
+def element_length(lst: Iterable[Sequence]) -> List[Tuple[Sequence ,int]]:
+    """Returns a tuple of the lengths of the elements of a list"""
+    return tuple(len(i) for i in lst)
