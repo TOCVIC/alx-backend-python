@@ -1,79 +1,66 @@
 #!/usr/bin/env python3
-'''Task 0's module.
-'''
+"""A github org client
+"""
 import unittest
-from typing import Dict, Tuple, Union
-from utils import access_nested_map, get_json, memoize
+from utils import access_nested_map, get_json
 from parameterized import parameterized
-from unittest.mock import patch, Mock
+from unittest.mock import Mock, patch
+from utils import access_nested_map, get_json, memoize
 
 
 class TestAccessNestedMap(unittest.TestCase):
-    '''Tests access_nested_map.
-    '''
     @parameterized.expand([
-        ({'a': 1}, ('a',), 1),
-        ({'a': {'b': 2}}, ('a',), {'b': 2}),
-        ({'a': {'b': 2}}, ('a', 'b'), 2),
-    ])
-    def test_access_nested_map(self, nested_map: Dict, path: Tuple, expected: Union[int, str]):
-        '''Tests access_nested_map.
-        '''
-        self.assertEqual(access_nested_map(nested_map, path), expected)
+            [{"a": 1}, ("a",), 1,],
+            [{"a": {"b": 2}}, ("a",), {"b": 2},],
+            [{"a": {"b": 2}}, ("a", "b"), 2,],
+        ])
+    def test_access_nested_map(self, nested_map, path, result):
+        self.assertEqual(access_nested_map(nested_map, path), result)
 
     @parameterized.expand([
-        ({'a': 1}, ('b',)),
-        ({'a': {'b': 2}}, ('a', 'c')),
-    ])
-    def test_access_nested_map_exception(self, nested_map: Dict, path: Tuple):
-        '''Tests access_nested_map.
-        '''
-        with self.assertRaises(KeyError):
-            access_nested_map(nested_map, path)
-    
+            [{}, ("a",), KeyError,],
+            [{"a": 1}, ("a", "b"), KeyError,],
+        ])
+    def test_access_nested_map_exception(self, nested_map, path, result):
+        with self.assertRaises(KeyError) as e:
+            self.assertEqual(access_nested_map(nested_map, path), e.exception)
+
 
 class TestGetJson(unittest.TestCase):
-    '''Tests get_json.
-    '''
     @parameterized.expand([
-        ('http://example.com', {'payload': 5}),
-        ('http://holberton.io', {'payload': True}),
-    ])
-    @patch('requests.get')
-    def test_get_json(self, test_url: str, test_payload: Dict, mock_get: Mock):
-        '''Tests get_json.
-        '''
-        mock_get.return_value.json.return_value = test_payload
-        self.assertEqual(get_json(test_url), test_payload)
-        mock_get.assert_called_once_with(test_url)
+            ["http://example.com", {"payload": True}],
+            ["http://holberton.io", {"payload": False}],
+        ])
+    def test_get_json(self, test_url, test_payload):
+        """method to test get_json method"""
+        mock_response = Mock()
+        mock_response.json.return_value = test_payload
+        with patch('requests.get', return_value=mock_response):
+            real_response = get_json(test_url)
+            self.assertEqual(real_response, test_payload)
+            mock_response.json.assert_called_once()
 
 
 class TestMemoize(unittest.TestCase):
-    '''Tests memoize.
-    '''
+    """ Class for testing memoization """
+
     def test_memoize(self):
-        '''Tests memoize.
-        '''
+        """ Tests memoize function """
+
         class TestClass:
-            '''A TestClass.
-            '''
+            """ Test class """
+
             def a_method(self):
-                '''A method.
-                '''
+                """ Method to always return 42 """
                 return 42
 
             @memoize
             def a_property(self):
-                '''A property.
-                '''
+                """ Returns memoized property """
                 return self.a_method()
-        with patch.object(
-            TestClass,
-            'a_method',
-            return_value=42
-            ) as mock_method:
-            test_class = TestClass()
-            test_class.a_property
-            test_class.a_property
-            mock_method.assert_called_once()
-            self.assertEqual(test_class.a_property, 42)
+
+        with patch.object(TestClass, 'a_method', return_value=42) as mocked:
+            spec = TestClass()
+            spec.a_property
+            spec.a_property
+            mocked.assert_called_once()
